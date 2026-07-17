@@ -1,3 +1,4 @@
+import Link from "next/link";
 import { Badge } from "@/components/ui/badge";
 import { Card, CardContent } from "@/components/ui/card";
 import type { Video } from "@/lib/db/schema";
@@ -5,7 +6,8 @@ import { formatDuration } from "@/lib/utils";
 
 export function VideoCard({ video, color }: { video: Video; color: string }) {
   return (
-    <Card className="overflow-hidden transition-shadow hover:shadow-md">
+    <Link href={`/video/${video.id}`} className="block">
+      <Card className="overflow-hidden transition-shadow hover:shadow-md">
       <div className="relative aspect-video bg-muted">
         {video.thumbnailUrl ? (
           // eslint-disable-next-line @next/next/no-img-element
@@ -39,6 +41,7 @@ export function VideoCard({ video, color }: { video: Video; color: string }) {
           </span>
         </div>
       </CardContent>
-    </Card>
+      </Card>
+    </Link>
   );
 }

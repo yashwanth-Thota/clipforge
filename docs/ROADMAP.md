@@ -8,9 +8,9 @@ Each phase ships as its own PR with a preview.
 - [x] **Phase 1 — Ingestion & topic catalog**
   - Upload + YouTube (video/channel) import via free oEmbed/RSS; zero-cost keyword categorization;
     topic-grouped catalog with re-categorize.
-- [ ] **Phase 2 — Captions & translation**
-  - Whisper transcription (worker/WASM/Groq) → captions; LibreTranslate multi-language; caption
-    review UI; SRT/VTT export.
+- [x] **Phase 2 — Captions & translation**
+  - Whisper transcription (Groq free tier now; worker/WASM later) → caption tracks; LibreTranslate
+    multi-language translation; caption review UI on the video page; SRT/VTT export endpoints.
 - [ ] **Phase 3 — Music & Shorts export**
   - Copyright-free music library + audio mixing; caption burn-in; vertical 9:16 export via the
     self-hostable ffmpeg worker; extract `packages/worker`.

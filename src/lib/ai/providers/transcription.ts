@@ -51,7 +51,9 @@ export class GroqWhisperProvider implements TranscriptionProvider {
 export class LocalWhisperProvider implements TranscriptionProvider {
   readonly id = "local";
   async transcribe(): Promise<Transcript> {
-    throw new NotImplementedYet("Local Whisper transcription", "Phase 2 (media worker)");
+    throw new Error(
+      "The 'local' Whisper provider runs in the self-hostable worker (Phase 3). For a zero-infra transcriber now, set TRANSCRIPTION_PROVIDER=groq with a free GROQ_API_KEY.",
+    );
   }
 }
 
