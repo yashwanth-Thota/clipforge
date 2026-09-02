@@ -19,7 +19,7 @@ export default async function CatalogPage() {
 
   return (
     <div className="space-y-8">
-      <div className="flex items-end justify-between">
+      <div className="flex flex-wrap items-end justify-between gap-2">
         <div>
           <h1 className="text-2xl font-bold tracking-tight">Catalog</h1>
           <p className="text-sm text-muted-foreground">
@@ -27,7 +27,7 @@ export default async function CatalogPage() {
             descriptions.
           </p>
         </div>
-        <RecategorizeButton />
+        <RecategorizeButton hasVideos={total > 0} />
       </div>
 
       {error && (

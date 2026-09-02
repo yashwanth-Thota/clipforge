@@ -1,6 +1,7 @@
 import type { Metadata } from "next";
 import Link from "next/link";
 import { Clapperboard } from "lucide-react";
+import { SiteNav } from "@/components/site-nav";
 import "./globals.css";
 
 export const metadata: Metadata = {
@@ -8,12 +9,6 @@ export const metadata: Metadata = {
   description:
     "Import or upload videos, auto-caption and translate, add copyright-free music, and browse a topic-grouped catalog. Free, open-source, self-configurable AI.",
 };
-
-const NAV = [
-  { href: "/", label: "Dashboard" },
-  { href: "/catalog", label: "Catalog" },
-  { href: "/settings", label: "Settings" },
-];
 
 export default function RootLayout({ children }: { children: React.ReactNode }) {
   return (
@@ -25,17 +20,7 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
               <Clapperboard className="h-5 w-5 text-primary" />
               ClipForge
             </Link>
-            <nav className="flex items-center gap-1 text-sm">
-              {NAV.map((item) => (
-                <Link
-                  key={item.href}
-                  href={item.href}
-                  className="rounded-md px-3 py-2 text-muted-foreground hover:bg-accent hover:text-foreground"
-                >
-                  {item.label}
-                </Link>
-              ))}
-            </nav>
+            <SiteNav />
           </div>
         </header>
         <main className="container py-10">{children}</main>

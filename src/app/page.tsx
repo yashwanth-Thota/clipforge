@@ -3,7 +3,7 @@ import { AlertTriangle } from "lucide-react";
 import { PipelineSteps } from "@/components/pipeline-steps";
 import { ImportForm } from "@/components/import-form";
 import { UploadForm } from "@/components/upload-form";
-import { Button } from "@/components/ui/button";
+import { buttonVariants } from "@/components/ui/button";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 
 export default function HomePage() {
@@ -49,8 +49,8 @@ export default function HomePage() {
       </section>
 
       <section className="flex justify-center">
-        <Link href="/catalog">
-          <Button size="lg">Open the catalog →</Button>
+        <Link href="/catalog" className={buttonVariants({ size: "lg" })}>
+          Open the catalog →
         </Link>
       </section>
 

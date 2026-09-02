@@ -1,17 +1,25 @@
+"use client";
+
+import { useState } from "react";
 import { Badge } from "@/components/ui/badge";
 import { Card, CardContent } from "@/components/ui/card";
 import type { Video } from "@/lib/db/schema";
 import { formatDuration } from "@/lib/utils";
 
 export function VideoCard({ video, color }: { video: Video; color: string }) {
+  const [thumbFailed, setThumbFailed] = useState(false);
+  const showThumb = Boolean(video.thumbnailUrl) && !thumbFailed;
+
   return (
     <Card className="overflow-hidden transition-shadow hover:shadow-md">
       <div className="relative aspect-video bg-muted">
-        {video.thumbnailUrl ? (
+        {showThumb ? (
           // eslint-disable-next-line @next/next/no-img-element
           <img
-            src={video.thumbnailUrl}
+            src={video.thumbnailUrl ?? undefined}
             alt={video.title}
+            loading="lazy"
+            onError={() => setThumbFailed(true)}
             className="h-full w-full object-cover"
           />
         ) : (
