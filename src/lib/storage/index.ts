@@ -1,5 +1,5 @@
 import { mkdir, writeFile } from "node:fs/promises";
-import { join, resolve } from "node:path";
+import { dirname, resolve, sep } from "node:path";
 
 export type StoredObject = {
   key: string;
@@ -17,9 +17,14 @@ export class LocalDiskDriver implements StorageDriver {
   readonly id = "local";
   constructor(private baseDir = process.env.STORAGE_LOCAL_DIR ?? "./uploads") {}
 
-  async put(key: string, data: Buffer | Uint8Array): Promise<StoredObject> {
-    const full = resolve(join(this.baseDir, key));
-    await mkdir(resolve(this.baseDir), { recursive: true });
+  async put(key: string, data: Buffer | Uint8Array, _contentType?: string): Promise<StoredObject> {
+    const base = resolve(this.baseDir);
+    const full = resolve(base, key);
+    // Upload keys embed the untrusted client filename; never write outside baseDir.
+    if (full === base || !full.startsWith(base.endsWith(sep) ? base : base + sep)) {
+      throw new Error(`Storage key escapes the base directory: ${key}`);
+    }
+    await mkdir(dirname(full), { recursive: true });
     await writeFile(full, data);
     return { key, size: data.byteLength, url: `/uploads/${key}` };
   }
