@@ -9,7 +9,7 @@ export function ImportForm() {
   const router = useRouter();
   const [url, setUrl] = useState("");
   const [loading, setLoading] = useState(false);
-  const [msg, setMsg] = useState<string | null>(null);
+  const [msg, setMsg] = useState<{ kind: "success" | "error"; text: string } | null>(null);
 
   async function submit(e: React.FormEvent) {
     e.preventDefault();
@@ -23,11 +23,14 @@ export function ImportForm() {
       });
       const data = await res.json();
       if (!res.ok) throw new Error(data.error ?? "Import failed");
-      setMsg(`Imported ${data.count} ${data.kind === "channel" ? "channel videos" : "video"}.`);
+      setMsg({
+        kind: "success",
+        text: `Imported ${data.count} ${data.kind === "channel" ? "channel videos" : "video"}.`,
+      });
       setUrl("");
       router.refresh();
     } catch (err) {
-      setMsg(err instanceof Error ? err.message : "Import failed");
+      setMsg({ kind: "error", text: err instanceof Error ? err.message : "Import failed" });
     } finally {
       setLoading(false);
     }
@@ -46,7 +49,14 @@ export function ImportForm() {
           {loading ? "Importing…" : "Import"}
         </Button>
       </div>
-      {msg && <p className="text-xs text-muted-foreground">{msg}</p>}
+      {msg && (
+        <p
+          role="status"
+          className={msg.kind === "error" ? "text-xs text-destructive" : "text-xs text-success"}
+        >
+          {msg.text}
+        </p>
+      )}
     </form>
   );
 }
