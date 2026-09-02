@@ -20,9 +20,10 @@ const MIN_CONFIDENCE = 0.18;
 
 function countOccurrences(haystack: string, needle: string): number {
   if (!needle) return 0;
-  // Word-ish boundary so "ai" doesn't match "brain".
+  // Word-ish boundary so "ai" doesn't match "brain"; lookahead so adjacent
+  // repeats ("ai ai") each count instead of sharing the separator.
   const escaped = needle.replace(/[.*+?^${}()|[\]\\]/g, "\\$&");
-  const re = new RegExp(`(?:^|[^a-z0-9])${escaped}(?:[^a-z0-9]|$)`, "gi");
+  const re = new RegExp(`(?:^|[^a-z0-9])${escaped}(?=[^a-z0-9]|$)`, "gi");
   const matches = haystack.match(re);
   return matches ? matches.length : 0;
 }

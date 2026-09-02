@@ -3,7 +3,7 @@ import { db } from "./db/client";
 import { topics, videos, type Video } from "./db/schema";
 import { getCategorizationProvider } from "./ai/registry";
 import { groupVideosByTopic, type CatalogGroup } from "./catalog/group";
-import { DEFAULT_TOPICS } from "./catalog/taxonomy";
+import { UNCATEGORIZED, DEFAULT_TOPICS } from "./catalog/taxonomy";
 import {
   fetchChannelUploads,
   fetchVideo,
@@ -23,11 +23,21 @@ async function ensureTopic(name: string): Promise<string> {
   return row.id;
 }
 
+/** Pick a persistable topic name from a categorize result. The keyword engine can
+ * return the Uncategorized sentinel with a positive confidence on sub-threshold
+ * ties; persisting that would create a real "Uncategorized" topic row. */
+export function topicForResult(result: {
+  topic: string;
+  confidence: number;
+}): string | undefined {
+  return result.topic !== UNCATEGORIZED && result.confidence > 0 ? result.topic : undefined;
+}
+
 async function persistImported(v: ImportedVideo, userId?: string): Promise<Video> {
   const categorizer = getCategorizationProvider();
   const result = await categorizer.categorize({ title: v.title, description: v.description });
-  const topicId =
-    result.topic && result.confidence > 0 ? await ensureTopic(result.topic) : undefined;
+  const name = topicForResult(result);
+  const topicId = name ? await ensureTopic(name) : undefined;
 
   const [row] = await db
     .insert(videos)
@@ -83,7 +93,8 @@ export async function createUploadVideo(
   const title = file.name.replace(/\.[^.]+$/, "");
   const categorizer = getCategorizationProvider();
   const result = await categorizer.categorize({ title, description: "" });
-  const topicId = result.confidence > 0 ? await ensureTopic(result.topic) : undefined;
+  const name = topicForResult(result);
+  const topicId = name ? await ensureTopic(name) : undefined;
 
   const [row] = await db
     .insert(videos)
@@ -116,7 +127,8 @@ export async function recategorizeAll(): Promise<number> {
   let updated = 0;
   for (const v of rows) {
     const result = await categorizer.categorize({ title: v.title, description: v.description });
-    const topicId = result.confidence > 0 ? await ensureTopic(result.topic) : null;
+    const name = topicForResult(result);
+    const topicId = name ? await ensureTopic(name) : null;
     await db
       .update(videos)
       .set({ topicId, topicConfidence: result.confidence })
